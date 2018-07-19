@@ -1,0 +1,258 @@
+Foreign key
+
+foreign key is to maintain data integrity.
+
+* constraints can be added either during table creation or aftr creating the table. To add constraints we use 'alter'.
+* if u have multiple same entries and then later if u want to add primary key to the same column, it will give error. this applies to all constraints
+
+DEMO TO ADD CONSTRAINTS USING FOREIGN KEY:
+
+create table AB_emp
+(
+emp_no number(3) primary key,
+empname varchar2(20) not null,
+salary number (8,2),
+designation varchar2(20),
+dept_no number(3)
+);
+
+create table AB2_dept
+(
+dept_no number(3) primary key,
+dept_name varchar2(20),
+location varchar2(20) not null
+);
+
+insert into AB_emp values (1,'Anu',98000, 'HR', 009);
+
+alter table AB_emp add constraint myfk_1 foreign key(dept_no) references AB2_dept(dept_no);
+
+[idu errror kodatte because Ab2 table nalli yaavde values illa. foreign key andre 2 tables nallu value irbeku.
+so AB2 ge dept no na insert maadi aamele foreign key moolaka constraint haakidre work aagatte]
+
+insert into AB2_dept values (009, 'EEE', 'Surathkal');
+
+(syntax to add constraint using foreign key after all the tables are created) alter table AB_emp add constraint myfk_1 foreign key(dept_no) references AB2_dept(dept_no);
+
+* Now if u delete AB2_dept, it gives error. So we can do
+1. make dept_no null.
+2. delete the AB_emp table completely.
+ 
+
+
+
+************rules for foreign key***********
+column datatype same
+primary key not needed
+column name not necessary to be same
+null or not null has no impact
+fk iro table nalli constraint idre saaku parent table ge aa column ge constraint bekaagilla.
+
+****ANOTHER WAY OF CREATING PK AND FK****
+create table supplier
+( 
+supplier_id numeric(10) not null,
+supplier_name varchar2(50) not null,
+contact_name varchar2(50),
+CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)        ////here in parenthesis u can add as many primary keys as u want using comma/////
+);
+
+create table products
+(
+product_id number(10) not null,
+supplier_id numeric(10) not null,
+CONSTRAINT fk_supplier FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id)
+);
+
+insert into supplier values (11,'pranav','sharath');
+insert into supplier values (12,'pranav','sharath');
+// values added to suppplier table//
+
+insert into supplier values (10,11);  // valid//
+insert into supplier values (12,11);  //valid//
+insert into supplier values (13,11);  //valid//
+insert into supplier values (10,10);  //invalid//
+insert into supplier values (13,12);  //valid//  
+
+[andre foreign key ge entries should be one among the primary keys]
+
+alter table student_T add email varchar(20); //add column//
+alter table student_T drop column email; //drop column//
+alter table student_T add constraint emailConstraint check(email in ('a','b','c'));  //add a constraint//
+alter table student_T drop constraint emailConstraint;  //drop a constraint//
+
+* foreign key can be null
+*primary key can't be repeated
+*there can be more than one constraint in a table.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+******CASCADING**********
+
+*update cascade both parent and child tables are updated. the same goes with delete. But u have to delete/update the parent row then all children rows will
+be affected. 
+but not vice versa
+
+********CASCADE EXAMPLE********
+
+create table section_t
+(
+section_id number(3) constraint s_id check (section_id>0),
+section_name char(30) constraint s_name not null,
+book_count number(6),
+constraint sect_prime primary key (section_id)) ***********note illi section_id ge 2 constraints ide*****
+;
+
+create table book_t
+(
+isbn number(10) constraint b_isbn check(isbn between 1 and 2000),
+title varchar(200) constraint b_title not null,
+author varchar(50) constraint b_auth not null,
+lent_date date,
+returned_date date,
+times_lent number(6),
+section_id number(3),
+constraint book_prime primary key (isbn),
+constraint book_sect foreign key (section_id) references section_t (section_id)
+on delete cascade
+);
+ 
+///add values to section table///
+insert into section_t values(1,'a',10);
+insert into section_t values(2,'b',20);
+
+///add values to book table///
+insert into book_t values(5,'q','w', to_date('19581203','YYYYMMDD'),to_date('19581224','YYYYMMDD'),23,2); 
+insert into book_t values(6,'r','t', to_date('19561203','YYYYMMDD'),to_date('19561224','YYYYMMDD'),24,1); 
+
+insert into book_t values(7,'r','t', to_date('19561203','YYYYMMDD'),to_date('19561224','YYYYMMDD'),24,3);******this is wrong since section id being
+primary key has only 1 and 2 as ids. u can't give 3********
+
+delete from section_t where section_id=1; *****delete cascade ide. so section table nalli delete maadidre erdralllu hogatte.
+but child table nalli delete maadidre it affects only child and not the table****
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*********user inda values togobekandre***************
+
+insert into fees_d values (&roll,&amount); ****eega user inda togolatte****
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*****SUBQUERY*********
+
+create table stu_d
+(
+roll number(20),
+name varchar(20)
+);
+
+create table fees_d
+(
+roll number(20),
+amount number(10)
+);
+
+insert into stu_d values(1,'a');
+insert into stu_d values(2,'b');
+
+insert into fees_d values(&roll,&amount);
+
+select name from stu_d where roll = (select roll from fees_d where amount = 9000); *****illi parenthesis nallirodu subquery****
+
+***this works only if only one student has 9000. If 2 or more have 9000 it doesn't work. for that use IN in the place of = after roll*********
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*********CO-RELATED SUBQUERIES******** (heavy tricky ide)
+
+create table emp100
+(
+deptno number,
+salary number
+);
+
+insert into emp100 values(&deptno,&salary); ***values kodu idu baratte****
+
+
+    DEPTNO     SALARY
+---------- ----------
+         1       2000
+         1       3000
+         2       5000
+         1       6000
+         2      10000
+
+delete from emp100 a where a.salary = (select max(salary) from emp100 b where a.deptno=b.deptno);
+
+when executed--
+
+SQL> delete from emp100 a where a.salary = (select max(salary) from emp100 b where a.deptno=b.deptno);
+
+2 rows deleted.
+
+SQL> select * from emp100;
+
+    DEPTNO     SALARY
+---------- ----------
+         1       2000
+         1       3000
+         2       5000
+ 
+*************so it deletes the highest salary of each dept****************
+similarly----------
+
+select loanno,loanamt,productkey
+from dailyloan
+where loanamt>(select avg(loanamt) from dailyloan where productkey=d.productkey);
+
+
+
+**********ANY*********
+
+*  >ANY andre it will return all the values except least value
+*  <ANY andre it will return all values except highest value
+*  >ALL andre it will return the greatest of all the values
+*  <ALL andre it will give least of all the values
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+************JOINS*************
+
+create table Suppliers
+(
+   supplier_id varchar(20),
+   supplier_name varchar(20)
+)
+;
+
+create table Orders
+(
+  order_id varchar(20),
+   supplier_id varchar(20),
+   order_date date
+)
+;
+
+insert into Suppliers values('10000','IBM');
+insert into Suppliers values('10001','Hewlett Packard');
+insert into Suppliers values('10002','Microsoft');
+insert into Suppliers values('10003','TCS');
+
+insert into Orders values('1','10000',to_date('3/3/09','mm/dd/yy'));
+insert into Orders values('2','10000',to_date('7/5/10','mm/dd/yy'));
+insert into Orders values('3','10001',to_date('12/8/10','mm/dd/yy'));
+
+select o.order_id,s.supplier_name from Orders o ,suppliers s where o.supplier_id=s.supplier_id;
+****this is full join******
+
+select o.order_id,s.supplier_name from Orders o inner join suppliers s on o.supplier_id=s.supplier_id;
+*****inner join***
+
+select o.order_id,s.supplier_name from Orders o left outer join suppliers s on o.supplier_id=s.supplier_id;
+*****illi all order id will be shown irrespective of whether it has supplier name or not*******
+
+select o.order_id,s.supplier_name from Orders o right outer join suppliers s on o.supplier_id=s.supplier_id;
+result:
+ORDER_ID             SUPPLIER_NAME
+-------------------- --------------------
+1                    IBM
+2                    IBM
+3                    Hewlett Packard
+                     Microsoft
+                     TCS
+
+*********so ella right side du print aagide though it has no LHS********

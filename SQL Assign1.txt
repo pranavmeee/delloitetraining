@@ -1,0 +1,25 @@
+create table Employee
+(
+EmployeeID char(5),
+EmployeeName varchar(20),
+EmployeeAddress varchar(20),
+DOB date,
+DOJ date,
+Salary number
+);
+
+insert into Employee values ('1', 'a','Mysuru',to_date('19960521','YYYYMMDD'),to_date('20180816','YYYYMMDD'), 10000);
+insert into Employee values ('2', 'b','Bengaluru',to_date('19960817','YYYYMMDD'),to_date('20180816','YYYYMMDD'), 20000);
+insert into Employee values ('3', 'c','Hosapete',to_date('19960811','YYYYMMDD'),to_date('20180816','YYYYMMDD'), 30000);
+insert into Employee values ('4', 'd','Surathkal',to_date('19960214','YYYYMMDD'),to_date('20180816','YYYYMMDD'), 40000);
+insert into Employee values ('5', 'e','Karwar',to_date('19961031','YYYYMMDD'),to_date('20180816','YYYYMMDD'), 50000);
+
+select * from Employee;
+
+select EmployeeName from Employee where Salary > 20000;
+
+select EmployeeName from Employee where EmployeeAddress like '%a'or EmployeeAddress like'%p' or EmployeeAddress like '%r'; 
+
+update Employee set Salary = Salary * 1.2;
+
+delete from Employee where Salary<5000;

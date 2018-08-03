@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type ="text/javascript">
+	function validateCustomerInfo()
+	{
+		var cN = document.getElementById("cName").value;
+		//var cI = document.getElementById("cId").value;
+		var cId = document.forms[0].elements[0].value;
+		var message= document.getElementById("message");
+		
+		if(cN.length == 0 || cI.length == 0 )
+			{
+			message.innerHTML = "<h2><font color='red'>Please enter your name and/or ID</h2>"
+			return false;
+			}
+		else
+			{
+			message.innerHTML = "<h1><font color ='green'> Welcome: "+cN;
+			return false;
+			}
+		
+		
+		
+	}
+
+</script>
+<meta charset="ISO-8859-1">
+<title>Please Login</title>
+</head>
+
+<body>
+<form name = "Login form" action="CustomerSave" onsubmit="return validateCustomerInfo()">
+<table>
+<tr><td> Customer ID: (required) </td><td><input type="text" id="cId" name="customerId"></td></tr>
+<tr><td> Customer Name: (required) </td><td><input type="text" id="cName" name="customerName"></td></tr>
+<tr><td> Customer Address: (required) </td><td><input type="text" id="cAdd" name="customerAddress"></td></tr>
+<tr><td> Bill Amount: (required) </td><td><input type="text" id="bill" name="billAmount"></td></tr>
+<tr><td><input type="submit" value="Go!"></td><td></td></tr>
+
+</table>
+</form>
+</body>
+
+<div id="message">
+</div>
+
+<span>
+
+</span>
+</html>

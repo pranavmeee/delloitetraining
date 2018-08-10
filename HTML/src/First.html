@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type = "text/javascript">
+
+document.write("<h1>Welcome to JS</h1>");
+
+
+function askInput()
+{
+	var msg=document.getElementById("msg");	
+	var name=prompt("Enter ur name");
+	//alert ("Welcome:"+name);
+	if(name.length==0){
+		msg.innerHTML="Please enter ur name";
+	}
+	else	{
+		msg.innerHTML="Welcome: \n" + name;
+		}
+	}
+function display()
+{
+	
+		
+		var r=confirm("Are u Sure to Logout?");
+		if (r){
+			msg.innerHTML="Logged out";
+		}
+		else{
+			msg.innerHTML="Welcome Back";
+		}
+	}
+</script>
+</head>
+<body>
+
+<input type="submit" value="Login" 
+onclick="askInput()"><br><br><hr>
+<input type="submit" value="Logout" 
+onclick="display()"><br>
+</body>
+<br>
+<div id= "msg"></div>
+</html>

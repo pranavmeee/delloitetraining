@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Electricity Bill</title>
+</head>
+<script type="text/javascript">
+
+function CustomerInfo(){
+    var bill=document.getElementById("BId").value;
+	var card=document.getElementById("CardNumber").value;
+	
+	var d= new Date();
+	if(d.getDate()>15){
+		var newbill=parseInt(100,10) + parseInt((d.getDate()-15)*50);
+		}
+	else{
+		var newbill=100;
+}
+	alert("Your bill is :" + " " + newbill + " INR");
+}
+	
+</script>
+<body>	
+<table>
+<tr>
+<td>Bill No: <td/><td><input type="text" id="BId" name="BillNumber"><br/></td>
+</tr>
+<tr>
+<td>Card number: <td/><td><input type="text" id="CardNumber" name="CardNumber"><td/>
+</tr>
+<tr><td><input type="Submit" value="Submit" onclick="CustomerInfo()"> </td></tr>
+</table>
+</body>
+</html>
